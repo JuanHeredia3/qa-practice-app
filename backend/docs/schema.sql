@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml.dbdiagram.io)
 -- Database: PostgreSQL
--- Generated at: 2026-02-05T15:23:01.128Z
+-- Generated at: 2026-02-06T15:33:11.134Z
 
 CREATE TABLE "users" (
   "username" varchar PRIMARY KEY,
@@ -13,14 +13,15 @@ CREATE TABLE "users" (
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "verify_emails" (
-  "id" bigserial PRIMARY KEY,
+CREATE TABLE "sessions" (
+  "id" uuid PRIMARY KEY,
   "username" varchar NOT NULL,
-  "email" varchar NOT NULL,
-  "secret_code" varchar NOT NULL,
-  "is_used" bool NOT NULL DEFAULT false,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "expired_at" timestamptz NOT NULL DEFAULT (now() + interval '15 minutes')
+  "refresh_token" varchar NOT NULL,
+  "user_agent" varchar NOT NULL,
+  "client_ip" varchar NOT NULL,
+  "is_blocked" bool NOT NULL DEFAULT false,
+  "expires_at" timestamptz NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-ALTER TABLE "verify_emails" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
+ALTER TABLE "sessions" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
