@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	db "github.com/qa-practice-project/db/sqlc"
 	"github.com/qa-practice-project/token"
@@ -31,6 +32,8 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 
 func (server *Server) setUpRouter() {
 	router := gin.Default()
+
+	router.Use(cors.Default())
 
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
