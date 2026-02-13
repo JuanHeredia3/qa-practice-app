@@ -1,12 +1,11 @@
-import type { AxiosInstance } from "axios";
-import type { IUserRepository } from "../types/user.repository.type";
 import type { CreateUserRequest, CreateUserRespose, LoginUserRequest, LoginUserResponse } from "../api/dtos/user.dto";
+import type { AxiosInstance } from "axios";
 
-export class UserRepository implements IUserRepository {
-  readonly api;
+export class UserService {
+  private api: AxiosInstance;
 
   constructor(api: AxiosInstance) {
-    this.api = api;
+    this.api = api
   }
 
   async createUser(createUserRequest: CreateUserRequest): Promise<CreateUserRespose> {
@@ -15,7 +14,7 @@ export class UserRepository implements IUserRepository {
   }
 
   async loginUser(loginUserRequest: LoginUserRequest): Promise<LoginUserResponse> {
-    const reponse = await this.api.post<LoginUserResponse>('/users', loginUserRequest);
+    const reponse = await this.api.post<LoginUserResponse>('/users/login', loginUserRequest);
     return reponse.data
   }
 }

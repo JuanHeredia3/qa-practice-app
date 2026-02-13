@@ -1,6 +1,13 @@
+import { useState } from "react";
+import userService from "../services";
+
 export const LoginForm = () => {
-  const handleLogin = (formData: FormData) => {
-    console.log('TODO');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    const response = await userService.loginUser({ username: username, password: password });
+    console.log(response);
   }
 
   return (
@@ -17,9 +24,10 @@ export const LoginForm = () => {
         type="text"
         name="email"
         id="email"
-        placeholder="test@test.com"
+        placeholder="username"
         required
         className="w-full p-2 rounded-md mb-2 text-black bg-white"
+        onChange={(e) => setUsername(e.target.value)}
       />
 
       <label 
@@ -34,6 +42,7 @@ export const LoginForm = () => {
         placeholder="Contraseña"
         required
         className="w-full p-2 rounded-md mb-2 text-black bg-white"
+        onChange={(e) => setPassword(e.target.value)}
       />
 
       <button

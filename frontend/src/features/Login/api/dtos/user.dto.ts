@@ -1,28 +1,28 @@
 export interface CreateUserRequest {
-  Username: string;
-  Password: string;
-  FullName: string;
-  Email: string;
+  full_name: string;
+  email: string;
+  username: string;
+  password: string;
 }
 
 export interface CreateUserRespose {
-  Username: string;
-  FullName: string;
-  Email: string;
-  PasswordChangedAt: string | null;
-  CreatedAt: string;
+  username: string;
+  full_name: string;
+  email: string;
+  password_changed_at: string | null;
+  created_at: string;
 }
 
 export interface LoginUserRequest {
-  Username: string;
-  Password: string;
+  username: string;
+  password: string;
 }
 
 export interface LoginUserResponse {
-  SessionId: string;
-  AccessToken: string;
-  AccessTokenExpiresAt: string;
-  RefreshToken: string;
-  RefreshTokenExpiresAt: string;
-  User: CreateUserRespose;
+  session_id: string;
+  access_token: string;
+  access_token_expires_at: string;
+  refresh_token: string;
+  refresh_token_expires_at: string;
+  user: CreateUserRespose;
 }

@@ -1,9 +1,6 @@
-import { UserRepository } from "./user.repository";
 import { api } from "../../../shared/api";
-import { UserManager } from "./user.manager";
-import mappers from "../utils/mappers";
+import { UserService } from "./user.service";
 
-const userRepository = new UserRepository(api);
-const userManager = new UserManager(userRepository, mappers);
+const userService = new UserService(api);
 
-export default userManager;
+export default userService;
