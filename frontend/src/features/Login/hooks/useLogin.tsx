@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
 interface Props {
-  login: (username: string, password: string) => void
+  login: (username: string, password: string) => Promise<void>
 }
 
 export const useLogin = ({ login }: Props) => {

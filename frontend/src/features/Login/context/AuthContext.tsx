@@ -1,17 +1,25 @@
+import type { User } from "@/data/user.data";
 import userService from "@/features/Login/services";
-import { createContext, type FC, type PropsWithChildren } from "react"
+import { createContext, useState, type FC, type PropsWithChildren } from "react"
 
 interface AuthContextProps {
-  login: (username: string, password: string) => void
+  user: User | null
+  login: (username: string, password: string) => Promise<void>
 }
 
 export const AuthContext = createContext({} as AuthContextProps);
 
 export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+
   const handleLogin = async (username: string, password: string) => {
     try {
       const response = await userService.loginUser({ username, password });
-      localStorage.setItem('session', JSON.stringify(response.data));
+      setUser(response.data.user);
+      localStorage.setItem('session', JSON.stringify({
+        access_token: response.data.access_token,
+        refresh_token: response.data.refresh_token,
+      }));
     } catch (error: any) {
       const message =
         error.response?.data?.message ||
@@ -24,6 +32,7 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <AuthContext value={{
+      user,
       login: handleLogin
     }}
     >{children}</AuthContext>
