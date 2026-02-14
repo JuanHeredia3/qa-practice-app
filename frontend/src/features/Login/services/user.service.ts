@@ -1,5 +1,5 @@
-import type { CreateUserRequest, CreateUserRespose, LoginUserRequest, LoginUserResponse } from "../api/dtos/user.dto";
-import type { AxiosInstance } from "axios";
+import type { CreateUserRequest, CreateUserRespose, LoginUserRequest, LoginUserResponse } from "../types/user.dto";
+import type { AxiosInstance, AxiosResponse } from "axios";
 
 export class UserService {
   private api: AxiosInstance;
@@ -8,13 +8,13 @@ export class UserService {
     this.api = api
   }
 
-  async createUser(createUserRequest: CreateUserRequest): Promise<CreateUserRespose> {
-    const reponse = await this.api.post<CreateUserRespose>('/users', createUserRequest);
-    return reponse.data
+  async createUser(createUserRequest: CreateUserRequest): Promise<AxiosResponse> {
+    const response = await this.api.post<CreateUserRespose>('/users', createUserRequest);
+    return response;
   }
 
-  async loginUser(loginUserRequest: LoginUserRequest): Promise<LoginUserResponse> {
-    const reponse = await this.api.post<LoginUserResponse>('/users/login', loginUserRequest);
-    return reponse.data
+  async loginUser(loginUserRequest: LoginUserRequest): Promise<AxiosResponse> {
+    const response = await this.api.post<LoginUserResponse>('/users/login', loginUserRequest);
+    return response;
   }
 }

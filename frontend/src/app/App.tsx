@@ -1,7 +1,10 @@
-import { LoginPage } from "@/features/Login/LoginPage"
+import { RouterProvider } from "react-router"
+import { appRouter } from "./AppRouter"
 
 export const App = () => {
   return (
-    <LoginPage />
+    <div className="bg-gradient">
+      <RouterProvider router={appRouter}/>
+    </div>
   )
 }
