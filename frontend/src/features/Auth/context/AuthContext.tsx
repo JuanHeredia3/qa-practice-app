@@ -1,5 +1,5 @@
 import type { User } from "@/data/user.data";
-import userService from "@/features/Login/services";
+import userService from "@/features/Auth/services";
 import { createContext, useState, type FC, type PropsWithChildren } from "react"
 
 interface AuthContextProps {

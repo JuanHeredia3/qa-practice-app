@@ -1,6 +1,6 @@
-import { LoginPage } from "@/features/Login/LoginPage";
 import { createBrowserRouter, Navigate } from "react-router";
 import { PublicRoute } from "./PublicRoute";
+import { LoginPage } from "@/pages/LoginPage";
 
 export const appRouter = createBrowserRouter([
   {
