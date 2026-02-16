@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "../hooks/useAuth";
 import { useLogin } from "../hooks/useLogin";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router";
 
 export const LoginForm = () => {
   const { login } = useAuth();
   const { setUsername, setPassword, handleLogin } = useLogin({ login });
+  const navigation = useNavigate();
 
   return (
     <form
@@ -44,8 +46,17 @@ export const LoginForm = () => {
 
       <Button 
         type="submit" 
-        className="bg-purple-400 hover:bg-purple-500 text-white p-2 rounded-md w-full"
+        className="bg-indigo-500 hover:bg-purple-500 text-white p-2 rounded-md w-full"
       >Ingresar</Button>
+
+      <div className="flex gap-3 justify-between items-center mt-10">
+        <small className="font-thin">¿Aún no tenes cuenta?</small>
+        <Button 
+          type="submit" 
+          className="bg-indigo-400 hover:bg-purple-400 text-white p-2 rounded-md w-[50%]"
+          onClick={() => navigation("/signup")}
+        >Registrarse</Button>
+      </div>
     </form>
   )
 }
