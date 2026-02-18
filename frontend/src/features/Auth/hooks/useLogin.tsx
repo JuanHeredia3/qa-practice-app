@@ -18,17 +18,14 @@ export const useLogin = ({ login }: Props) => {
     try {
       await login(username, password);
     } catch (error) {
-      toast('Usuario o contraseña incorrectos',{
-        description: 'Intente nuevamente',
-        duration: 5000,
-        position: 'top-center',
-        action: {
-          label: 'Cerrar',
-          onClick: () => toast.dismiss(),
-        }
-      });
+      toast.error('Usuario o contraseña incorrectos');
+      throw error;
     }
 
+    toast.success('Sesión iniciada',{
+      duration: 5000,
+      position: 'top-center',
+    });
     navigation('/home');
   }
   

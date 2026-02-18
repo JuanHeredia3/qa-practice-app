@@ -1,8 +1,8 @@
 export interface CreateUserRequest {
-  full_name: string;
-  email: string;
   username: string;
   password: string;
+  email: string;
+  full_name: string;
 }
 
 export interface CreateUserRespose {
