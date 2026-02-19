@@ -11,6 +11,16 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Habit struct {
+	ID          uuid.UUID `json:"id"`
+	TrackerID   uuid.UUID `json:"tracker_id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Status      string    `json:"status"`
+	ModifiedAt  time.Time `json:"modified_at"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
 type Session struct {
 	ID           uuid.UUID `json:"id"`
 	Username     string    `json:"username"`
@@ -22,9 +32,16 @@ type Session struct {
 	CreatedAt    time.Time `json:"created_at"`
 }
 
+type Tracker struct {
+	ID         uuid.UUID `json:"id"`
+	Username   string    `json:"username"`
+	Name       string    `json:"name"`
+	ModifiedAt time.Time `json:"modified_at"`
+	CreatedAt  time.Time `json:"created_at"`
+}
+
 type User struct {
 	Username          string             `json:"username"`
-	Role              string             `json:"role"`
 	HashedPassword    string             `json:"hashed_password"`
 	FullName          string             `json:"full_name"`
 	Email             string             `json:"email"`

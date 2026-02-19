@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml.dbdiagram.io)
 -- Database: PostgreSQL
--- Generated at: 2026-02-18T16:58:43.578Z
+-- Generated at: 2026-02-18T19:56:15.575Z
 
 CREATE TABLE "users" (
   "username" varchar PRIMARY KEY,
@@ -23,4 +23,26 @@ CREATE TABLE "sessions" (
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
+CREATE TABLE "trackers" (
+  "id" uuid PRIMARY KEY,
+  "username" varchar NOT NULL,
+  "name" varchar NOT NULL,
+  "modified_at" timestamptz NOT NULL DEFAULT (now()),
+  "created_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE TABLE "habits" (
+  "id" uuid PRIMARY KEY,
+  "tracker_id" uuid NOT NULL,
+  "name" varchar NOT NULL,
+  "description" varchar NOT NULL,
+  "status" varchar NOT NULL,
+  "modified_at" timestamptz NOT NULL DEFAULT (now()),
+  "created_at" timestamptz NOT NULL DEFAULT (now())
+);
+
 ALTER TABLE "sessions" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
+
+ALTER TABLE "trackers" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
+
+ALTER TABLE "habits" ADD FOREIGN KEY ("tracker_id") REFERENCES "trackers" ("id");

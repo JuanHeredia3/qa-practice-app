@@ -2,6 +2,7 @@ package token
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/o1egl/paseto"
@@ -25,8 +26,10 @@ func NewPasetoMaker(symmetricKey string) (Maker, error) {
 	return maker, nil
 }
 
-func (maker *PasetoMaker) CreateToken(username string, role string, duration time.Duration) (string, *Payload, error) {
-	payload, err := NewPayload(username, role, duration)
+func (maker *PasetoMaker) CreateToken(username string, duration time.Duration) (string, *Payload, error) {
+	log.Println("Access Token duration:", duration)
+
+	payload, err := NewPayload(username, duration)
 	if err != nil {
 		return "", payload, err
 	}

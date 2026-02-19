@@ -11,10 +11,18 @@ import (
 )
 
 type Querier interface {
+	CreateHabit(ctx context.Context, arg CreateHabitParams) (Habit, error)
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
+	CreateTracker(ctx context.Context, arg CreateTrackerParams) (Tracker, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	GetHabit(ctx context.Context, id uuid.UUID) (Habit, error)
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
+	GetTracker(ctx context.Context, id uuid.UUID) (Tracker, error)
 	GetUser(ctx context.Context, username string) (User, error)
+	ListHabits(ctx context.Context) ([]Habit, error)
+	ListTrackers(ctx context.Context) ([]Tracker, error)
+	UpdateHabit(ctx context.Context, arg UpdateHabitParams) (Habit, error)
+	UpdateTracker(ctx context.Context, arg UpdateTrackerParams) (Tracker, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 

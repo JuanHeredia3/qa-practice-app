@@ -25,3 +25,21 @@ Table sessions {
   expires_at timestamptz [not null]
   created_at timestamptz [not null, default: `now()`]
 }
+
+Table trackers as T {
+  id uuid [pk]
+  username varchar [ref: > U.username, not null]
+  name varchar [not null]
+  modified_at timestamptz [not null, default: `now()`]
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table habits as H {
+  id uuid [pk]
+  tracker_id uuid [ref: > T.id, not null]
+  name varchar [not null]
+  description varchar [not null]
+  status varchar [not null]
+  modified_at timestamptz [not null, default: `now()`]
+  created_at timestamptz [not null, default: `now()`]
+}
