@@ -25,15 +25,8 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const handleLogin = async (username: string, password: string) => {
     try {
       const response = await userService.loginUser({ username, password });
-
-      const sessionData = {
-        access_token: response.data.access_token,
-        refresh_token: response.data.refresh_token,
-        user: response.data.user
-      }
-
-      setUser(sessionData.user);
-      localStorage.setItem('session', JSON.stringify(sessionData));
+      setUser(response.data.user);
+      localStorage.setItem('session', JSON.stringify(response.data));
     } catch (error: any) {
       const message =
         error.response?.data?.message ||
