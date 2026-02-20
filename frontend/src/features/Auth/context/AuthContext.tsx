@@ -1,6 +1,6 @@
 import type { User } from "@/data/user.data";
 import userService from "@/features/Auth/services";
-import { createContext, useState, type FC, type PropsWithChildren } from "react"
+import { createContext, useEffect, useState, type FC, type PropsWithChildren } from "react"
 
 interface AuthContextProps {
   user: User | null
@@ -13,14 +13,27 @@ export const AuthContext = createContext({} as AuthContextProps);
 export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
+  useEffect(() => {
+    const storedSessionData = localStorage.getItem('session');
+
+    if (storedSessionData) {
+      const parsed = JSON.parse(storedSessionData)
+      setUser(parsed.user);
+    }
+  }, [])
+
   const handleLogin = async (username: string, password: string) => {
     try {
       const response = await userService.loginUser({ username, password });
-      setUser(response.data.user);
-      localStorage.setItem('session', JSON.stringify({
+
+      const sessionData = {
         access_token: response.data.access_token,
         refresh_token: response.data.refresh_token,
-      }));
+        user: response.data.user
+      }
+
+      setUser(sessionData.user);
+      localStorage.setItem('session', JSON.stringify(sessionData));
     } catch (error: any) {
       const message =
         error.response?.data?.message ||

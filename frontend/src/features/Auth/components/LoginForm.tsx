@@ -58,7 +58,7 @@ export const LoginForm = () => {
             e.preventDefault();
             navigation("/signup");
           }}
-        >Registrarse</Button>
+        >Registrate</Button>
       </div>
     </form>
   )

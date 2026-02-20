@@ -87,7 +87,7 @@ export const SignupForm = () => {
       <Button 
         type="submit" 
         className="bg-indigo-500 hover:bg-purple-500 text-white p-2 rounded-md w-full"
-      >Registrarse</Button>
+      >Registrate</Button>
     </form>
   )
 }
