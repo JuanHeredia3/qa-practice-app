@@ -34,7 +34,13 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 func (server *Server) setUpRouter() {
 	router := gin.Default()
 
-	router.Use(cors.Default())
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
