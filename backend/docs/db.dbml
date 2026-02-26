@@ -30,6 +30,7 @@ Table trackers as T {
   id uuid [pk]
   username varchar [ref: > U.username, not null]
   name varchar [not null]
+  description varchar [not null]
   modified_at timestamptz [not null, default: `now()`]
   created_at timestamptz [not null, default: `now()`]
 }

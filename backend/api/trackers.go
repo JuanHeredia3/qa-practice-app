@@ -13,7 +13,8 @@ import (
 )
 
 type createTrackerRequest struct {
-	Name string `json:"name" binding:"required"`
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description" binding:"required"`
 }
 
 func (server *Server) createTracker(ctx *gin.Context) {
@@ -26,9 +27,10 @@ func (server *Server) createTracker(ctx *gin.Context) {
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
 	arg := db.CreateTrackerParams{
-		ID:       uuid.New(),
-		Username: authPayload.Username,
-		Name:     req.Name,
+		ID:          uuid.New(),
+		Username:    authPayload.Username,
+		Name:        req.Name,
+		Description: req.Description,
 	}
 
 	tracker, err := server.store.CreateTracker(ctx, arg)
@@ -81,8 +83,9 @@ func (server *Server) getTracker(ctx *gin.Context) {
 }
 
 type updateTrackerRequest struct {
-	ID   uuid.UUID `json:"id" binding:"required"`
-	Name string    `json:"name"`
+	ID          uuid.UUID `json:"id" binding:"required"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
 }
 
 func (server *Server) updateTracker(ctx *gin.Context) {
@@ -96,6 +99,10 @@ func (server *Server) updateTracker(ctx *gin.Context) {
 		ID: req.ID,
 		Name: pgtype.Text{
 			String: req.Name,
+			Valid:  true,
+		},
+		Description: pgtype.Text{
+			String: req.Description,
 			Valid:  true,
 		},
 		ModifiedAt: pgtype.Timestamptz{

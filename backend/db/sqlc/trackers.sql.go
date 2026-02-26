@@ -14,21 +14,27 @@ import (
 
 const createTracker = `-- name: CreateTracker :one
 INSERT INTO trackers (
-  id, username, name
+  id, username, name, description
 ) VALUES (
-  $1, $2, $3
+  $1, $2, $3, $4
 )
-RETURNING id, username, name, modified_at, created_at
+RETURNING id, username, name, modified_at, created_at, description
 `
 
 type CreateTrackerParams struct {
-	ID       uuid.UUID `json:"id"`
-	Username string    `json:"username"`
-	Name     string    `json:"name"`
+	ID          uuid.UUID `json:"id"`
+	Username    string    `json:"username"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
 }
 
 func (q *Queries) CreateTracker(ctx context.Context, arg CreateTrackerParams) (Tracker, error) {
-	row := q.db.QueryRow(ctx, createTracker, arg.ID, arg.Username, arg.Name)
+	row := q.db.QueryRow(ctx, createTracker,
+		arg.ID,
+		arg.Username,
+		arg.Name,
+		arg.Description,
+	)
 	var i Tracker
 	err := row.Scan(
 		&i.ID,
@@ -36,12 +42,13 @@ func (q *Queries) CreateTracker(ctx context.Context, arg CreateTrackerParams) (T
 		&i.Name,
 		&i.ModifiedAt,
 		&i.CreatedAt,
+		&i.Description,
 	)
 	return i, err
 }
 
 const getTracker = `-- name: GetTracker :one
-SELECT id, username, name, modified_at, created_at FROM trackers
+SELECT id, username, name, modified_at, created_at, description FROM trackers
 WHERE id = $1 LIMIT 1
 `
 
@@ -54,12 +61,13 @@ func (q *Queries) GetTracker(ctx context.Context, id uuid.UUID) (Tracker, error)
 		&i.Name,
 		&i.ModifiedAt,
 		&i.CreatedAt,
+		&i.Description,
 	)
 	return i, err
 }
 
 const listTrackers = `-- name: ListTrackers :many
-SELECT id, username, name, modified_at, created_at FROM trackers
+SELECT id, username, name, modified_at, created_at, description FROM trackers
 `
 
 func (q *Queries) ListTrackers(ctx context.Context) ([]Tracker, error) {
@@ -77,6 +85,7 @@ func (q *Queries) ListTrackers(ctx context.Context) ([]Tracker, error) {
 			&i.Name,
 			&i.ModifiedAt,
 			&i.CreatedAt,
+			&i.Description,
 		); err != nil {
 			return nil, err
 		}
@@ -93,23 +102,26 @@ UPDATE trackers
 SET
   username = COALESCE($1, username),
   name = COALESCE($2, name),
-  modified_at = COALESCE($3, modified_at)
+  description = COALESCE($3, description),
+  modified_at = COALESCE($4, modified_at)
 WHERE
-  id = $4
-RETURNING id, username, name, modified_at, created_at
+  id = $5
+RETURNING id, username, name, modified_at, created_at, description
 `
 
 type UpdateTrackerParams struct {
-	Username   pgtype.Text        `json:"username"`
-	Name       pgtype.Text        `json:"name"`
-	ModifiedAt pgtype.Timestamptz `json:"modified_at"`
-	ID         uuid.UUID          `json:"id"`
+	Username    pgtype.Text        `json:"username"`
+	Name        pgtype.Text        `json:"name"`
+	Description pgtype.Text        `json:"description"`
+	ModifiedAt  pgtype.Timestamptz `json:"modified_at"`
+	ID          uuid.UUID          `json:"id"`
 }
 
 func (q *Queries) UpdateTracker(ctx context.Context, arg UpdateTrackerParams) (Tracker, error) {
 	row := q.db.QueryRow(ctx, updateTracker,
 		arg.Username,
 		arg.Name,
+		arg.Description,
 		arg.ModifiedAt,
 		arg.ID,
 	)
@@ -120,6 +132,7 @@ func (q *Queries) UpdateTracker(ctx context.Context, arg UpdateTrackerParams) (T
 		&i.Name,
 		&i.ModifiedAt,
 		&i.CreatedAt,
+		&i.Description,
 	)
 	return i, err
 }

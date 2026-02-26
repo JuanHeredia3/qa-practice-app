@@ -1,0 +1,1 @@
+ALTER TABLE trackers ADD COLUMN description VARCHAR NOT NULL DEFAULT ''

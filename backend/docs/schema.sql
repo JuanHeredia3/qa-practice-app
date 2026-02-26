@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml.dbdiagram.io)
 -- Database: PostgreSQL
--- Generated at: 2026-02-18T19:56:15.575Z
+-- Generated at: 2026-02-20T19:41:14.086Z
 
 CREATE TABLE "users" (
   "username" varchar PRIMARY KEY,
@@ -27,6 +27,7 @@ CREATE TABLE "trackers" (
   "id" uuid PRIMARY KEY,
   "username" varchar NOT NULL,
   "name" varchar NOT NULL,
+  "description" varchar NOT NULL,
   "modified_at" timestamptz NOT NULL DEFAULT (now()),
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );

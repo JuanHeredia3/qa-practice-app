@@ -33,11 +33,12 @@ type Session struct {
 }
 
 type Tracker struct {
-	ID         uuid.UUID `json:"id"`
-	Username   string    `json:"username"`
-	Name       string    `json:"name"`
-	ModifiedAt time.Time `json:"modified_at"`
-	CreatedAt  time.Time `json:"created_at"`
+	ID          uuid.UUID `json:"id"`
+	Username    string    `json:"username"`
+	Name        string    `json:"name"`
+	ModifiedAt  time.Time `json:"modified_at"`
+	CreatedAt   time.Time `json:"created_at"`
+	Description string    `json:"description"`
 }
 
 type User struct {
