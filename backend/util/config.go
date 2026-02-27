@@ -7,6 +7,7 @@ import (
 )
 
 type Config struct {
+	FrontendURL          string        `mapstructure:"FRONTEND_URL"`
 	DBSource             string        `mapstructure:"DB_SOURCE"`
 	MigrationURL         string        `mapstructure:"MIGRATION_URL"`
 	HTTPServerAddress    string        `mapstructure:"HTTP_SERVER_ADDRESS"`
