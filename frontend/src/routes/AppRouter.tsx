@@ -5,6 +5,7 @@ import { SignupPage } from "@/pages/SignupPage";
 import { PrivateRoute } from "./PrivateRoute";
 import { HomePage } from "@/pages/HomePage";
 import { AppLayout } from "@/layouts/AppLayout";
+import { TrackerPage } from "@/pages/TrackerPage";
 
 export const appRouter = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ export const appRouter = createBrowserRouter([
       {
         index: true,
         element: <PrivateRoute children={<HomePage />} />
+      },
+      {
+        path: 'tracker/:id',
+        element: <PrivateRoute children={<TrackerPage />} />
       },
     ]
   },

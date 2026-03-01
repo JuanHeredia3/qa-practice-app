@@ -1,13 +1,17 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import type { FC } from "react";
+import { useNavigate } from "react-router";
 
 interface Props {
+  id: string;
   title: string;
   description: string;
 }
 
-export const TrackerCard: FC<Props> = ({ title, description }) => {
+export const TrackerCard: FC<Props> = ({ id, title, description }) => {
+  const navigate = useNavigate();
+  
   return (
     <Card className="bg-slate-800 border border-slate-500 shadow-lg overflow-hidden relative mx-auto w-full max-w-sm pt-0">
       <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
@@ -23,7 +27,10 @@ export const TrackerCard: FC<Props> = ({ title, description }) => {
         </CardDescription>
       </CardHeader>
       <CardFooter>
-        <Button className="bg-indigo-500 hover:bg-indigo-400 text-slate-100 w-full">View Tracker</Button>
+        <Button 
+          className="bg-indigo-500 hover:bg-indigo-400 text-slate-100 w-full"
+          onClick={() => navigate(`tracker/${id}`)}
+        >View Tracker</Button>
       </CardFooter>
     </Card>
   )

@@ -1,30 +1,16 @@
-import { useEffect, useState } from "react"
-import type { Tracker } from "../types/tracker.dto";
 import trackerService from "../services";
+import { useQuery } from "@tanstack/react-query";
 
 export const useTrackers = () => {
-  const [trackers, setTrackers] = useState<Tracker[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['trackers'],
+    queryFn: () => trackerService.getTrackers(),
+    staleTime: 1000 * 60 * 5
+  });
 
-  useEffect(() => {
-    const fetchTrackers = async () => {
-      try {
-        const { data } = await trackerService.getTrackers();
-        setTrackers(data);
-      } catch (error) {
-        setError("Error al cargar los trackers");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchTrackers();
-  }, []);
-  
   return {
-    trackers,
-    loading,
-    error
+    trackers: data,
+    loading: isLoading,
+    error: isError
   }
 }
