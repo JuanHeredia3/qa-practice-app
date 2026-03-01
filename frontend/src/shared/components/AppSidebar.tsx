@@ -21,7 +21,7 @@ export function AppSidebar() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/" className="text-xl font-medium">
+                <Link to="/" className="text-xl font-thin">
                   <Home className="w-4 h-4" />
                   Inicio
                 </Link>
@@ -30,7 +30,7 @@ export function AppSidebar() {
 
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/dashboards" className="text-xl font-medium">
+                <Link to="/dashboards" className="text-xl font-thin">
                   <ChartNoAxesCombined className="w-4 h-4" />
                   Dashboards
                 </Link>
@@ -39,7 +39,7 @@ export function AppSidebar() {
 
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/configuracion" className="text-xl font-medium">
+                <Link to="/configuracion" className="text-xl font-thin">
                   <Settings className="w-4 h-4" />
                   Configuración
                 </Link>

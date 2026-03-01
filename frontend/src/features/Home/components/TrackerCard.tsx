@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
+import type { FC } from "react";
 
-export const TrackerCard = () => {
+interface Props {
+  title: string;
+  description: string;
+}
+
+export const TrackerCard: FC<Props> = ({ title, description }) => {
   return (
     <Card className="bg-slate-800 border border-slate-500 shadow-lg overflow-hidden relative mx-auto w-full max-w-sm pt-0">
       <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
@@ -11,9 +17,9 @@ export const TrackerCard = () => {
         className="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
       />
       <CardHeader>
-        <CardTitle className="text-slate-300 font-bold">Tracker Title</CardTitle>
+        <CardTitle className="text-slate-300 font-bold">{title}</CardTitle>
         <CardDescription className="text-slate-400">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque, nesciunt nostrum vel officia atque beatae?
+          {description}
         </CardDescription>
       </CardHeader>
       <CardFooter>
