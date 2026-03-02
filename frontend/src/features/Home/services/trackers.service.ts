@@ -12,4 +12,9 @@ export class TrackerService {
     const response = await this.api.get<Tracker[]>('/trackers');
     return response;
   }
+
+  async getTrackerById(id: string) {
+    const response = await this.api.get<Tracker>(`/trackers/${id}`);
+    return response;
+  }
 }
