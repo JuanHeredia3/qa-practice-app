@@ -1,6 +1,6 @@
 -- name: CreateHabit :one
 INSERT INTO habits (
-  id, tracker_id, name, description, status, modified_at
+  id, column_id, name, status, frequency, time_spent
 ) VALUES (
   $1, $2, $3, $4, $5, $6
 )
@@ -16,10 +16,11 @@ WHERE id = $1 LIMIT 1;
 -- name: UpdateHabit :one
 UPDATE habits
 SET
-  tracker_id = COALESCE(sqlc.narg(tracker_id), tracker_id),
+  column_id = COALESCE(sqlc.narg(column_id), column_id),
   name = COALESCE(sqlc.narg(name), name),
-  description = COALESCE(sqlc.narg(description), description),
   status = COALESCE(sqlc.narg(status), status),
+  frequency = COALESCE(sqlc.narg(frequency), frequency),
+  time_spent = COALESCE(sqlc.narg(time_spent), time_spent),
   modified_at = COALESCE(sqlc.narg(modified_at), modified_at)
 WHERE
   id = sqlc.arg(id)

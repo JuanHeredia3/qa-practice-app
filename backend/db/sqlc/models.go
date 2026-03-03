@@ -11,14 +11,32 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Board struct {
+	ID         uuid.UUID   `json:"id"`
+	TrackerID  uuid.UUID   `json:"tracker_id"`
+	BoardDate  pgtype.Date `json:"board_date"`
+	CreatedAt  time.Time   `json:"created_at"`
+	ModifiedAt time.Time   `json:"modified_at"`
+}
+
+type Column struct {
+	ID         uuid.UUID `json:"id"`
+	BoardID    uuid.UUID `json:"board_id"`
+	Name       string    `json:"name"`
+	Position   int32     `json:"position"`
+	CreatedAt  time.Time `json:"created_at"`
+	ModifiedAt time.Time `json:"modified_at"`
+}
+
 type Habit struct {
-	ID          uuid.UUID `json:"id"`
-	TrackerID   uuid.UUID `json:"tracker_id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	Status      string    `json:"status"`
-	ModifiedAt  time.Time `json:"modified_at"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID         uuid.UUID   `json:"id"`
+	ColumnID   uuid.UUID   `json:"column_id"`
+	Name       string      `json:"name"`
+	Status     string      `json:"status"`
+	Frequency  string      `json:"frequency"`
+	TimeSpent  pgtype.Text `json:"time_spent"`
+	CreatedAt  time.Time   `json:"created_at"`
+	ModifiedAt time.Time   `json:"modified_at"`
 }
 
 type Session struct {

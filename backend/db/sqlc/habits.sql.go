@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -15,46 +14,47 @@ import (
 
 const createHabit = `-- name: CreateHabit :one
 INSERT INTO habits (
-  id, tracker_id, name, description, status, modified_at
+  id, column_id, name, status, frequency, time_spent
 ) VALUES (
   $1, $2, $3, $4, $5, $6
 )
-RETURNING id, tracker_id, name, description, status, modified_at, created_at
+RETURNING id, column_id, name, status, frequency, time_spent, created_at, modified_at
 `
 
 type CreateHabitParams struct {
-	ID          uuid.UUID `json:"id"`
-	TrackerID   uuid.UUID `json:"tracker_id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	Status      string    `json:"status"`
-	ModifiedAt  time.Time `json:"modified_at"`
+	ID        uuid.UUID   `json:"id"`
+	ColumnID  uuid.UUID   `json:"column_id"`
+	Name      string      `json:"name"`
+	Status    string      `json:"status"`
+	Frequency string      `json:"frequency"`
+	TimeSpent pgtype.Text `json:"time_spent"`
 }
 
 func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (Habit, error) {
 	row := q.db.QueryRow(ctx, createHabit,
 		arg.ID,
-		arg.TrackerID,
+		arg.ColumnID,
 		arg.Name,
-		arg.Description,
 		arg.Status,
-		arg.ModifiedAt,
+		arg.Frequency,
+		arg.TimeSpent,
 	)
 	var i Habit
 	err := row.Scan(
 		&i.ID,
-		&i.TrackerID,
+		&i.ColumnID,
 		&i.Name,
-		&i.Description,
 		&i.Status,
-		&i.ModifiedAt,
+		&i.Frequency,
+		&i.TimeSpent,
 		&i.CreatedAt,
+		&i.ModifiedAt,
 	)
 	return i, err
 }
 
 const getHabit = `-- name: GetHabit :one
-SELECT id, tracker_id, name, description, status, modified_at, created_at FROM habits
+SELECT id, column_id, name, status, frequency, time_spent, created_at, modified_at FROM habits
 WHERE id = $1 LIMIT 1
 `
 
@@ -63,18 +63,19 @@ func (q *Queries) GetHabit(ctx context.Context, id uuid.UUID) (Habit, error) {
 	var i Habit
 	err := row.Scan(
 		&i.ID,
-		&i.TrackerID,
+		&i.ColumnID,
 		&i.Name,
-		&i.Description,
 		&i.Status,
-		&i.ModifiedAt,
+		&i.Frequency,
+		&i.TimeSpent,
 		&i.CreatedAt,
+		&i.ModifiedAt,
 	)
 	return i, err
 }
 
 const listHabits = `-- name: ListHabits :many
-SELECT id, tracker_id, name, description, status, modified_at, created_at FROM habits
+SELECT id, column_id, name, status, frequency, time_spent, created_at, modified_at FROM habits
 `
 
 func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
@@ -88,12 +89,13 @@ func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
 		var i Habit
 		if err := rows.Scan(
 			&i.ID,
-			&i.TrackerID,
+			&i.ColumnID,
 			&i.Name,
-			&i.Description,
 			&i.Status,
-			&i.ModifiedAt,
+			&i.Frequency,
+			&i.TimeSpent,
 			&i.CreatedAt,
+			&i.ModifiedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -108,43 +110,47 @@ func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
 const updateHabit = `-- name: UpdateHabit :one
 UPDATE habits
 SET
-  tracker_id = COALESCE($1, tracker_id),
+  column_id = COALESCE($1, column_id),
   name = COALESCE($2, name),
-  description = COALESCE($3, description),
-  status = COALESCE($4, status),
-  modified_at = COALESCE($5, modified_at)
+  status = COALESCE($3, status),
+  frequency = COALESCE($4, frequency),
+  time_spent = COALESCE($5, time_spent),
+  modified_at = COALESCE($6, modified_at)
 WHERE
-  id = $6
-RETURNING id, tracker_id, name, description, status, modified_at, created_at
+  id = $7
+RETURNING id, column_id, name, status, frequency, time_spent, created_at, modified_at
 `
 
 type UpdateHabitParams struct {
-	TrackerID   pgtype.UUID        `json:"tracker_id"`
-	Name        pgtype.Text        `json:"name"`
-	Description pgtype.Text        `json:"description"`
-	Status      pgtype.Text        `json:"status"`
-	ModifiedAt  pgtype.Timestamptz `json:"modified_at"`
-	ID          uuid.UUID          `json:"id"`
+	ColumnID   pgtype.UUID        `json:"column_id"`
+	Name       pgtype.Text        `json:"name"`
+	Status     pgtype.Text        `json:"status"`
+	Frequency  pgtype.Text        `json:"frequency"`
+	TimeSpent  pgtype.Text        `json:"time_spent"`
+	ModifiedAt pgtype.Timestamptz `json:"modified_at"`
+	ID         uuid.UUID          `json:"id"`
 }
 
 func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) (Habit, error) {
 	row := q.db.QueryRow(ctx, updateHabit,
-		arg.TrackerID,
+		arg.ColumnID,
 		arg.Name,
-		arg.Description,
 		arg.Status,
+		arg.Frequency,
+		arg.TimeSpent,
 		arg.ModifiedAt,
 		arg.ID,
 	)
 	var i Habit
 	err := row.Scan(
 		&i.ID,
-		&i.TrackerID,
+		&i.ColumnID,
 		&i.Name,
-		&i.Description,
 		&i.Status,
-		&i.ModifiedAt,
+		&i.Frequency,
+		&i.TimeSpent,
 		&i.CreatedAt,
+		&i.ModifiedAt,
 	)
 	return i, err
 }
