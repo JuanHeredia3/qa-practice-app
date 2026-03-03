@@ -1,8 +1,5 @@
-Project simplebank {
+Project qa_practice_app {
   database_type: 'PostgreSQL'
-  Note: '''
-    # QA practice app database schema
-  '''
 }
 
 Table users as U {
@@ -31,16 +28,46 @@ Table trackers as T {
   username varchar [ref: > U.username, not null]
   name varchar [not null]
   description varchar [not null]
-  modified_at timestamptz [not null, default: `now()`]
   created_at timestamptz [not null, default: `now()`]
+  modified_at timestamptz [not null, default: `now()`]
 }
 
-Table habits as H {
+Table boards {
   id uuid [pk]
-  tracker_id uuid [ref: > T.id, not null]
-  name varchar [not null]
-  description varchar [not null]
-  status varchar [not null]
-  modified_at timestamptz [not null, default: `now()`]
+  tracker_id uuid [ref: > trackers.id, not null]
+  board_date date [not null]
   created_at timestamptz [not null, default: `now()`]
+  modified_at timestamptz [not null, default: `now()`]
+
+  Indexes {
+    (tracker_id, board_date) [unique]
+  }
+}
+
+Table columns {
+  id uuid [pk]
+  board_id uuid [ref: > boards.id, not null]
+  name varchar(100) [not null]
+  position int [not null]
+  created_at timestamptz [not null, default: `now()`]
+  modified_at timestamptz [not null, default: `now()`]
+
+  Indexes {
+    (board_id, position)
+  }
+}
+
+Table habits {
+  id uuid [pk]
+  column_id uuid [ref: > columns.id, not null]
+  name varchar [not null]
+  status varchar [not null]
+  frequency varchar [not null]
+  time_spent varchar
+  created_at timestamptz [not null, default: `now()`]
+  modified_at timestamptz [not null, default: `now()`]
+
+  Indexes {
+    (column_id)
+  }
 }
