@@ -18,7 +18,7 @@ INSERT INTO habits (
 ) VALUES (
   $1, $2, $3, $4, $5, $6
 )
-RETURNING id, column_id, name, status, frequency, time_spent, created_at, modified_at
+RETURNING id, column_id, name, status, time_spent, created_at, modified_at, frequency
 `
 
 type CreateHabitParams struct {
@@ -26,7 +26,7 @@ type CreateHabitParams struct {
 	ColumnID  uuid.UUID   `json:"column_id"`
 	Name      string      `json:"name"`
 	Status    string      `json:"status"`
-	Frequency string      `json:"frequency"`
+	Frequency []int32     `json:"frequency"`
 	TimeSpent pgtype.Text `json:"time_spent"`
 }
 
@@ -45,16 +45,16 @@ func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (Habit
 		&i.ColumnID,
 		&i.Name,
 		&i.Status,
-		&i.Frequency,
 		&i.TimeSpent,
 		&i.CreatedAt,
 		&i.ModifiedAt,
+		&i.Frequency,
 	)
 	return i, err
 }
 
 const getHabit = `-- name: GetHabit :one
-SELECT id, column_id, name, status, frequency, time_spent, created_at, modified_at FROM habits
+SELECT id, column_id, name, status, time_spent, created_at, modified_at, frequency FROM habits
 WHERE id = $1 LIMIT 1
 `
 
@@ -66,16 +66,16 @@ func (q *Queries) GetHabit(ctx context.Context, id uuid.UUID) (Habit, error) {
 		&i.ColumnID,
 		&i.Name,
 		&i.Status,
-		&i.Frequency,
 		&i.TimeSpent,
 		&i.CreatedAt,
 		&i.ModifiedAt,
+		&i.Frequency,
 	)
 	return i, err
 }
 
 const listHabits = `-- name: ListHabits :many
-SELECT id, column_id, name, status, frequency, time_spent, created_at, modified_at FROM habits
+SELECT id, column_id, name, status, time_spent, created_at, modified_at, frequency FROM habits
 `
 
 func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
@@ -92,10 +92,10 @@ func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
 			&i.ColumnID,
 			&i.Name,
 			&i.Status,
-			&i.Frequency,
 			&i.TimeSpent,
 			&i.CreatedAt,
 			&i.ModifiedAt,
+			&i.Frequency,
 		); err != nil {
 			return nil, err
 		}
@@ -118,14 +118,14 @@ SET
   modified_at = COALESCE($6, modified_at)
 WHERE
   id = $7
-RETURNING id, column_id, name, status, frequency, time_spent, created_at, modified_at
+RETURNING id, column_id, name, status, time_spent, created_at, modified_at, frequency
 `
 
 type UpdateHabitParams struct {
 	ColumnID   pgtype.UUID        `json:"column_id"`
 	Name       pgtype.Text        `json:"name"`
 	Status     pgtype.Text        `json:"status"`
-	Frequency  pgtype.Text        `json:"frequency"`
+	Frequency  []int32            `json:"frequency"`
 	TimeSpent  pgtype.Text        `json:"time_spent"`
 	ModifiedAt pgtype.Timestamptz `json:"modified_at"`
 	ID         uuid.UUID          `json:"id"`
@@ -147,10 +147,10 @@ func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) (Habit
 		&i.ColumnID,
 		&i.Name,
 		&i.Status,
-		&i.Frequency,
 		&i.TimeSpent,
 		&i.CreatedAt,
 		&i.ModifiedAt,
+		&i.Frequency,
 	)
 	return i, err
 }

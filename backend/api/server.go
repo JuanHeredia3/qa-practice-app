@@ -52,6 +52,10 @@ func (server *Server) setUpRouter() {
 	authRoutes.GET("/trackers", server.listTrackers)
 	authRoutes.POST("/trackers", server.createTracker)
 	authRoutes.PUT("/trackers", server.updateTracker)
+	authRoutes.GET("/trackers/board/:tracker_id", server.getBoardByTracker)
+
+	authRoutes.POST("/boards", server.createBoard)
+	authRoutes.GET("/boards/:id", server.getBoard)
 
 	server.router = router
 }

@@ -12,11 +12,10 @@ import (
 )
 
 type Board struct {
-	ID         uuid.UUID   `json:"id"`
-	TrackerID  uuid.UUID   `json:"tracker_id"`
-	BoardDate  pgtype.Date `json:"board_date"`
-	CreatedAt  time.Time   `json:"created_at"`
-	ModifiedAt time.Time   `json:"modified_at"`
+	ID         uuid.UUID `json:"id"`
+	TrackerID  uuid.UUID `json:"tracker_id"`
+	CreatedAt  time.Time `json:"created_at"`
+	ModifiedAt time.Time `json:"modified_at"`
 }
 
 type Column struct {
@@ -33,8 +32,17 @@ type Habit struct {
 	ColumnID   uuid.UUID   `json:"column_id"`
 	Name       string      `json:"name"`
 	Status     string      `json:"status"`
-	Frequency  string      `json:"frequency"`
 	TimeSpent  pgtype.Text `json:"time_spent"`
+	CreatedAt  time.Time   `json:"created_at"`
+	ModifiedAt time.Time   `json:"modified_at"`
+	Frequency  []int32     `json:"frequency"`
+}
+
+type HabitEntry struct {
+	ID         uuid.UUID   `json:"id"`
+	HabitID    uuid.UUID   `json:"habit_id"`
+	Date       pgtype.Date `json:"date"`
+	Completed  bool        `json:"completed"`
 	CreatedAt  time.Time   `json:"created_at"`
 	ModifiedAt time.Time   `json:"modified_at"`
 }
