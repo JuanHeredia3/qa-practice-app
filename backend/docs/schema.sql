@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml.dbdiagram.io)
 -- Database: PostgreSQL
--- Generated at: 2026-03-03T18:56:03.335Z
+-- Generated at: 2026-03-04T16:46:29.303Z
 
 CREATE TABLE "users" (
   "username" varchar PRIMARY KEY,
@@ -35,7 +35,6 @@ CREATE TABLE "trackers" (
 CREATE TABLE "boards" (
   "id" uuid PRIMARY KEY,
   "tracker_id" uuid NOT NULL,
-  "board_date" date NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "modified_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -54,13 +53,22 @@ CREATE TABLE "habits" (
   "column_id" uuid NOT NULL,
   "name" varchar NOT NULL,
   "status" varchar NOT NULL,
-  "frequency" varchar NOT NULL,
+  "frequency" int[] NOT NULL,
   "time_spent" varchar,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "modified_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE UNIQUE INDEX ON "boards" ("tracker_id", "board_date");
+CREATE TABLE "habit_entry" (
+  "id" uuid PRIMARY KEY,
+  "habit_id" uuid NOT NULL,
+  "date" date NOT NULL,
+  "completed" boolean NOT NULL DEFAULT false,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "modified_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE UNIQUE INDEX ON "boards" ("tracker_id");
 
 CREATE INDEX ON "columns" ("board_id", "position");
 
@@ -75,3 +83,5 @@ ALTER TABLE "boards" ADD FOREIGN KEY ("tracker_id") REFERENCES "trackers" ("id")
 ALTER TABLE "columns" ADD FOREIGN KEY ("board_id") REFERENCES "boards" ("id");
 
 ALTER TABLE "habits" ADD FOREIGN KEY ("column_id") REFERENCES "columns" ("id");
+
+ALTER TABLE "habit_entry" ADD FOREIGN KEY ("habit_id") REFERENCES "habits" ("id");

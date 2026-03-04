@@ -32,15 +32,14 @@ Table trackers as T {
   modified_at timestamptz [not null, default: `now()`]
 }
 
-Table boards {
+Table boards as B {
   id uuid [pk]
-  tracker_id uuid [ref: > trackers.id, not null]
-  board_date date [not null]
+  tracker_id uuid [ref: > T.id, not null]
   created_at timestamptz [not null, default: `now()`]
   modified_at timestamptz [not null, default: `now()`]
 
   Indexes {
-    (tracker_id, board_date) [unique]
+    (tracker_id) [unique]
   }
 }
 
@@ -62,7 +61,7 @@ Table habits {
   column_id uuid [ref: > columns.id, not null]
   name varchar [not null]
   status varchar [not null]
-  frequency varchar [not null]
+  frequency int[] [not null]
   time_spent varchar
   created_at timestamptz [not null, default: `now()`]
   modified_at timestamptz [not null, default: `now()`]
@@ -70,4 +69,13 @@ Table habits {
   Indexes {
     (column_id)
   }
+}
+
+Table habit_entry {
+  id uuid [pk]
+  habit_id uuid [ref: > habits.id, not null]
+  date date [not null]
+  completed boolean [not null, default: false]
+  created_at timestamptz [not null, default: `now()`]
+  modified_at timestamptz [not null, default: `now()`]
 }
