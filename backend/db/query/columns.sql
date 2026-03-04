@@ -8,7 +8,8 @@ RETURNING *;
 
 -- name: ListColumnsByBoard :many
 SELECT * FROM columns
-WHERE board_id = $1 LIMIT 1;
+WHERE board_id = $1
+ORDER BY position ASC;
 
 -- name: GetColumn :one
 SELECT * FROM columns
