@@ -26,7 +26,7 @@ type Querier interface {
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetTracker(ctx context.Context, id uuid.UUID) (Tracker, error)
 	GetUser(ctx context.Context, username string) (User, error)
-	ListColumns(ctx context.Context) ([]Column, error)
+	ListColumnsByBoard(ctx context.Context, boardID uuid.UUID) ([]Column, error)
 	ListHabitEntries(ctx context.Context) ([]HabitEntry, error)
 	ListHabits(ctx context.Context) ([]Habit, error)
 	ListTrackers(ctx context.Context) ([]Tracker, error)

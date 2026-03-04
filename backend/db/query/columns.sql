@@ -6,8 +6,9 @@ INSERT INTO columns (
 )
 RETURNING *;
 
--- name: ListColumns :many
-SELECT * FROM columns;
+-- name: ListColumnsByBoard :many
+SELECT * FROM columns
+WHERE board_id = $1 LIMIT 1;
 
 -- name: GetColumn :one
 SELECT * FROM columns

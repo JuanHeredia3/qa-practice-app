@@ -66,12 +66,13 @@ func (q *Queries) GetColumn(ctx context.Context, id uuid.UUID) (Column, error) {
 	return i, err
 }
 
-const listColumns = `-- name: ListColumns :many
+const listColumnsByBoard = `-- name: ListColumnsByBoard :many
 SELECT id, board_id, name, position, created_at, modified_at FROM columns
+WHERE board_id = $1 LIMIT 1
 `
 
-func (q *Queries) ListColumns(ctx context.Context) ([]Column, error) {
-	rows, err := q.db.Query(ctx, listColumns)
+func (q *Queries) ListColumnsByBoard(ctx context.Context, boardID uuid.UUID) ([]Column, error) {
+	rows, err := q.db.Query(ctx, listColumnsByBoard, boardID)
 	if err != nil {
 		return nil, err
 	}
