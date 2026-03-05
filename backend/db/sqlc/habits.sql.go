@@ -107,6 +107,78 @@ func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
 	return items, nil
 }
 
+const listHabitsByColumnId = `-- name: ListHabitsByColumnId :many
+SELECT id, column_id, name, status, time_spent, created_at, modified_at, frequency FROM habits
+WHERE column_id = $1
+`
+
+func (q *Queries) ListHabitsByColumnId(ctx context.Context, columnID uuid.UUID) ([]Habit, error) {
+	rows, err := q.db.Query(ctx, listHabitsByColumnId, columnID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Habit{}
+	for rows.Next() {
+		var i Habit
+		if err := rows.Scan(
+			&i.ID,
+			&i.ColumnID,
+			&i.Name,
+			&i.Status,
+			&i.TimeSpent,
+			&i.CreatedAt,
+			&i.ModifiedAt,
+			&i.Frequency,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listHabitsByTrackerId = `-- name: ListHabitsByTrackerId :many
+SELECT h.id, h.column_id, h.name, h.status, h.time_spent, h.created_at, h.modified_at, h.frequency
+FROM habits h
+JOIN columns c ON c.id = h.column_id
+JOIN boards b ON b.id = c.board_id
+WHERE b.tracker_id = $1
+ORDER BY c.position, h.created_at
+`
+
+func (q *Queries) ListHabitsByTrackerId(ctx context.Context, trackerID uuid.UUID) ([]Habit, error) {
+	rows, err := q.db.Query(ctx, listHabitsByTrackerId, trackerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Habit{}
+	for rows.Next() {
+		var i Habit
+		if err := rows.Scan(
+			&i.ID,
+			&i.ColumnID,
+			&i.Name,
+			&i.Status,
+			&i.TimeSpent,
+			&i.CreatedAt,
+			&i.ModifiedAt,
+			&i.Frequency,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateHabit = `-- name: UpdateHabit :one
 UPDATE habits
 SET

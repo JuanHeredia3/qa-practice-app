@@ -9,6 +9,18 @@ RETURNING *;
 -- name: ListHabits :many
 SELECT * FROM habits;
 
+-- name: ListHabitsByTrackerId :many
+SELECT h.*
+FROM habits h
+JOIN columns c ON c.id = h.column_id
+JOIN boards b ON b.id = c.board_id
+WHERE b.tracker_id = $1
+ORDER BY c.position, h.created_at;
+
+-- name: ListHabitsByColumnId :many
+SELECT * FROM habits
+WHERE column_id = $1;
+
 -- name: GetHabit :one
 SELECT * FROM habits
 WHERE id = $1 LIMIT 1;

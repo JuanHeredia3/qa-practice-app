@@ -29,6 +29,8 @@ type Querier interface {
 	ListColumnsByBoard(ctx context.Context, boardID uuid.UUID) ([]Column, error)
 	ListHabitEntries(ctx context.Context) ([]HabitEntry, error)
 	ListHabits(ctx context.Context) ([]Habit, error)
+	ListHabitsByColumnId(ctx context.Context, columnID uuid.UUID) ([]Habit, error)
+	ListHabitsByTrackerId(ctx context.Context, trackerID uuid.UUID) ([]Habit, error)
 	ListTrackers(ctx context.Context) ([]Tracker, error)
 	UpdateColumn(ctx context.Context, arg UpdateColumnParams) (Column, error)
 	UpdateHabit(ctx context.Context, arg UpdateHabitParams) (Habit, error)
