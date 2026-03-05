@@ -53,6 +53,7 @@ func (server *Server) setUpRouter() {
 	authRoutes.POST("/trackers", server.createTracker)
 	authRoutes.PUT("/trackers", server.updateTracker)
 	authRoutes.GET("/trackers/board/:id", server.getBoardByTracker)
+	authRoutes.GET("/trackers/habits/:id", server.listHabitsByTracker)
 
 	authRoutes.POST("/boards", server.createBoard)
 	authRoutes.GET("/boards/:id", server.getBoard)
@@ -61,6 +62,12 @@ func (server *Server) setUpRouter() {
 	authRoutes.GET("/columns/:id", server.getColumn)
 	authRoutes.POST("/columns", server.createColumn)
 	authRoutes.PUT("/columns", server.updateColumn)
+	authRoutes.GET("/columns/habits/:id", server.listHabitsByColumn)
+
+	authRoutes.POST("/habits", server.createHabit)
+	authRoutes.GET("/habits/:id", server.getHabit)
+	authRoutes.GET("/habits", server.listHabits)
+	authRoutes.PUT("/habits", server.updateHabit)
 
 	server.router = router
 }
