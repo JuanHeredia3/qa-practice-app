@@ -107,13 +107,13 @@ func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
 	return items, nil
 }
 
-const listHabitsByColumnId = `-- name: ListHabitsByColumnId :many
+const listHabitsByColumn = `-- name: ListHabitsByColumn :many
 SELECT id, column_id, name, status, time_spent, created_at, modified_at, frequency FROM habits
 WHERE column_id = $1
 `
 
-func (q *Queries) ListHabitsByColumnId(ctx context.Context, columnID uuid.UUID) ([]Habit, error) {
-	rows, err := q.db.Query(ctx, listHabitsByColumnId, columnID)
+func (q *Queries) ListHabitsByColumn(ctx context.Context, columnID uuid.UUID) ([]Habit, error) {
+	rows, err := q.db.Query(ctx, listHabitsByColumn, columnID)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +141,7 @@ func (q *Queries) ListHabitsByColumnId(ctx context.Context, columnID uuid.UUID) 
 	return items, nil
 }
 
-const listHabitsByTrackerId = `-- name: ListHabitsByTrackerId :many
+const listHabitsByTracker = `-- name: ListHabitsByTracker :many
 SELECT h.id, h.column_id, h.name, h.status, h.time_spent, h.created_at, h.modified_at, h.frequency
 FROM habits h
 JOIN columns c ON c.id = h.column_id
@@ -150,8 +150,8 @@ WHERE b.tracker_id = $1
 ORDER BY c.position, h.created_at
 `
 
-func (q *Queries) ListHabitsByTrackerId(ctx context.Context, trackerID uuid.UUID) ([]Habit, error) {
-	rows, err := q.db.Query(ctx, listHabitsByTrackerId, trackerID)
+func (q *Queries) ListHabitsByTracker(ctx context.Context, trackerID uuid.UUID) ([]Habit, error) {
+	rows, err := q.db.Query(ctx, listHabitsByTracker, trackerID)
 	if err != nil {
 		return nil, err
 	}
