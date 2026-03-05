@@ -99,11 +99,11 @@ func (server *Server) updateTracker(ctx *gin.Context) {
 		ID: req.ID,
 		Name: pgtype.Text{
 			String: req.Name,
-			Valid:  true,
+			Valid:  req.Name != "",
 		},
 		Description: pgtype.Text{
 			String: req.Description,
-			Valid:  true,
+			Valid:  req.Description != "",
 		},
 		ModifiedAt: pgtype.Timestamptz{
 			Time:  time.Now(),

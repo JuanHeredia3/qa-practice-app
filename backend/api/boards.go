@@ -25,10 +25,10 @@ func (server *Server) createBoard(ctx *gin.Context) {
 		TrackerID: req.TrackerID,
 	}
 
-	tracker, err := server.store.CreateBoard(ctx, arg)
+	board, err := server.store.CreateBoard(ctx, arg)
 	if err != nil {
 		if db.ErrorCode(err) == db.ForeignKeyViolation {
-			ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("tracker not exists")))
+			ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("board not exists")))
 			return
 		}
 
@@ -41,7 +41,7 @@ func (server *Server) createBoard(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, tracker)
+	ctx.JSON(http.StatusOK, board)
 }
 
 type getBoardRequest struct {
@@ -61,7 +61,7 @@ func (server *Server) getBoard(ctx *gin.Context) {
 		return
 	}
 
-	tracker, err := server.store.GetBoard(ctx, id)
+	board, err := server.store.GetBoard(ctx, id)
 	if err != nil {
 		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(errors.New("board not found")))
@@ -71,11 +71,11 @@ func (server *Server) getBoard(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, tracker)
+	ctx.JSON(http.StatusOK, board)
 }
 
 type getBoardByTrackerIdRequest struct {
-	TrackerID string `uri:"tracker_id" binding:"required"`
+	ID string `uri:"id" binding:"required"`
 }
 
 func (server *Server) getBoardByTracker(ctx *gin.Context) {
@@ -85,13 +85,13 @@ func (server *Server) getBoardByTracker(ctx *gin.Context) {
 		return
 	}
 
-	id, err := uuid.Parse(req.TrackerID)
+	id, err := uuid.Parse(req.ID)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("invalid UUID format")))
 		return
 	}
 
-	tracker, err := server.store.GetBoardByTrackerId(ctx, id)
+	board, err := server.store.GetBoardByTrackerId(ctx, id)
 	if err != nil {
 		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(errors.New("board not found")))
@@ -101,5 +101,5 @@ func (server *Server) getBoardByTracker(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, tracker)
+	ctx.JSON(http.StatusOK, board)
 }
