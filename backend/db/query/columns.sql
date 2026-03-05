@@ -18,7 +18,6 @@ WHERE id = $1 LIMIT 1;
 -- name: UpdateColumn :one
 UPDATE columns
 SET
-  board_id = COALESCE(sqlc.narg(board_id), board_id),
   name = COALESCE(sqlc.narg(name), name),
   position = COALESCE(sqlc.narg(position), position),
   modified_at = COALESCE(sqlc.narg(modified_at), modified_at)

@@ -68,7 +68,8 @@ func (q *Queries) GetColumn(ctx context.Context, id uuid.UUID) (Column, error) {
 
 const listColumnsByBoard = `-- name: ListColumnsByBoard :many
 SELECT id, board_id, name, position, created_at, modified_at FROM columns
-WHERE board_id = $1 LIMIT 1
+WHERE board_id = $1
+ORDER BY position ASC
 `
 
 func (q *Queries) ListColumnsByBoard(ctx context.Context, boardID uuid.UUID) ([]Column, error) {
@@ -101,17 +102,15 @@ func (q *Queries) ListColumnsByBoard(ctx context.Context, boardID uuid.UUID) ([]
 const updateColumn = `-- name: UpdateColumn :one
 UPDATE columns
 SET
-  board_id = COALESCE($1, board_id),
-  name = COALESCE($2, name),
-  position = COALESCE($3, position),
-  modified_at = COALESCE($4, modified_at)
+  name = COALESCE($1, name),
+  position = COALESCE($2, position),
+  modified_at = COALESCE($3, modified_at)
 WHERE
-  id = $5
+  id = $4
 RETURNING id, board_id, name, position, created_at, modified_at
 `
 
 type UpdateColumnParams struct {
-	BoardID    pgtype.UUID        `json:"board_id"`
 	Name       pgtype.Text        `json:"name"`
 	Position   pgtype.Int4        `json:"position"`
 	ModifiedAt pgtype.Timestamptz `json:"modified_at"`
@@ -120,7 +119,6 @@ type UpdateColumnParams struct {
 
 func (q *Queries) UpdateColumn(ctx context.Context, arg UpdateColumnParams) (Column, error) {
 	row := q.db.QueryRow(ctx, updateColumn,
-		arg.BoardID,
 		arg.Name,
 		arg.Position,
 		arg.ModifiedAt,
