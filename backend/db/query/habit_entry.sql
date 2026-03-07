@@ -16,7 +16,6 @@ WHERE id = $1 LIMIT 1;
 -- name: UpdateHabitEntry :one
 UPDATE habit_entry
 SET
-  habit_id = COALESCE(sqlc.narg(habit_id), habit_id),
   date = COALESCE(sqlc.narg(date), date),
   completed = COALESCE(sqlc.narg(completed), completed),
   modified_at = COALESCE(sqlc.narg(modified_at), modified_at)

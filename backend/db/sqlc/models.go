@@ -39,12 +39,12 @@ type Habit struct {
 }
 
 type HabitEntry struct {
-	ID         uuid.UUID   `json:"id"`
-	HabitID    uuid.UUID   `json:"habit_id"`
-	Date       pgtype.Date `json:"date"`
-	Completed  bool        `json:"completed"`
-	CreatedAt  time.Time   `json:"created_at"`
-	ModifiedAt time.Time   `json:"modified_at"`
+	ID         uuid.UUID `json:"id"`
+	HabitID    uuid.UUID `json:"habit_id"`
+	Completed  bool      `json:"completed"`
+	CreatedAt  time.Time `json:"created_at"`
+	ModifiedAt time.Time `json:"modified_at"`
+	Date       time.Time `json:"date"`
 }
 
 type Session struct {

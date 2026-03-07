@@ -69,6 +69,11 @@ func (server *Server) setUpRouter() {
 	authRoutes.GET("/habits", server.listHabits)
 	authRoutes.PUT("/habits", server.updateHabit)
 
+	authRoutes.POST("/habit-entries", server.createHabitEntry)
+	authRoutes.GET("/habit-entries/:id", server.getHabitEntry)
+	authRoutes.GET("/habit-entries", server.listHabitEntries)
+	authRoutes.PUT("/habit-entries", server.updateHabitEntry)
+
 	server.router = router
 }
 

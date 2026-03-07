@@ -188,7 +188,7 @@ func (server *Server) updateHabit(ctx *gin.Context) {
 		arg.Frequency = *req.Frequency
 	}
 
-	column, err := server.store.UpdateHabit(ctx, arg)
+	habit, err := server.store.UpdateHabit(ctx, arg)
 	if err != nil {
 		if db.ErrorCode(err) == db.ForeignKeyViolation {
 			ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("column not found")))
@@ -203,5 +203,5 @@ func (server *Server) updateHabit(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, column)
+	ctx.JSON(http.StatusOK, habit)
 }
