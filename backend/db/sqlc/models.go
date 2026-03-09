@@ -28,14 +28,14 @@ type Column struct {
 }
 
 type Habit struct {
-	ID         uuid.UUID   `json:"id"`
-	ColumnID   uuid.UUID   `json:"column_id"`
-	Name       string      `json:"name"`
-	Status     string      `json:"status"`
-	TimeSpent  pgtype.Text `json:"time_spent"`
-	CreatedAt  time.Time   `json:"created_at"`
-	ModifiedAt time.Time   `json:"modified_at"`
-	Frequency  []int32     `json:"frequency"`
+	ID               uuid.UUID `json:"id"`
+	ColumnID         uuid.UUID `json:"column_id"`
+	Name             string    `json:"name"`
+	CreatedAt        time.Time `json:"created_at"`
+	ModifiedAt       time.Time `json:"modified_at"`
+	Frequency        []int32   `json:"frequency"`
+	Status           bool      `json:"status"`
+	TimeSpentMinutes int32     `json:"time_spent_minutes"`
 }
 
 type HabitEntry struct {

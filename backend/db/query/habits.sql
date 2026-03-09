@@ -1,6 +1,6 @@
 -- name: CreateHabit :one
 INSERT INTO habits (
-  id, column_id, name, status, frequency, time_spent
+  id, column_id, name, status, frequency, time_spent_minutes
 ) VALUES (
   $1, $2, $3, $4, $5, $6
 )
@@ -32,7 +32,7 @@ SET
   name = COALESCE(sqlc.narg(name), name),
   status = COALESCE(sqlc.narg(status), status),
   frequency = COALESCE(sqlc.narg(frequency), frequency),
-  time_spent = COALESCE(sqlc.narg(time_spent), time_spent),
+  time_spent_minutes = COALESCE(sqlc.narg(time_spent_minutes), time_spent_minutes),
   modified_at = COALESCE(sqlc.narg(modified_at), modified_at)
 WHERE
   id = sqlc.arg(id)

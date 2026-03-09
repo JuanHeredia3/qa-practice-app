@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml.dbdiagram.io)
 -- Database: PostgreSQL
--- Generated at: 2026-03-04T16:46:29.303Z
+-- Generated at: 2026-03-09T19:51:09.687Z
 
 CREATE TABLE "users" (
   "username" varchar PRIMARY KEY,
@@ -52,9 +52,9 @@ CREATE TABLE "habits" (
   "id" uuid PRIMARY KEY,
   "column_id" uuid NOT NULL,
   "name" varchar NOT NULL,
-  "status" varchar NOT NULL,
+  "status" boolean NOT NULL,
   "frequency" int[] NOT NULL,
-  "time_spent" varchar,
+  "time_spent_minutes" int NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "modified_at" timestamptz NOT NULL DEFAULT (now())
 );

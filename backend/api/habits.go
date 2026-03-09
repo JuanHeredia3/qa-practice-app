@@ -2,7 +2,11 @@ package api
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"regexp"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,12 +15,23 @@ import (
 	db "github.com/qa-practice-project/db/sqlc"
 )
 
+type habitResponse struct {
+	ID         uuid.UUID `json:"id"`
+	ColumnID   uuid.UUID `json:"column_id"`
+	Name       string    `json:"name"`
+	Status     bool      `json:"status"`
+	Frequency  []int32   `json:"frequency"`
+	TimeSpent  string    `json:"time_spent"`
+	CreatedAt  time.Time `json:"created_at"`
+	ModifiedAt time.Time `json:"modified_at"`
+}
+
 type createHabitRequest struct {
-	ColumnID  uuid.UUID   `json:"column_id" binding:"required"`
-	Name      string      `json:"name" binding:"required"`
-	Status    string      `json:"status" binding:"required"`
-	Frequency []int32     `json:"frequency" binding:"required"`
-	TimeSpent pgtype.Text `json:"time_spent" binding:"required"`
+	ColumnID  uuid.UUID `json:"column_id" binding:"required"`
+	Name      string    `json:"name" binding:"required"`
+	Status    bool      `json:"status" binding:"required"`
+	Frequency []int32   `json:"frequency" binding:"required"`
+	TimeSpent string    `json:"time_spent" binding:"required"`
 }
 
 func (server *Server) createHabit(ctx *gin.Context) {
@@ -26,13 +41,24 @@ func (server *Server) createHabit(ctx *gin.Context) {
 		return
 	}
 
+	durationRegex := regexp.MustCompile(`^\d+(\.\d+)?h$`)
+
+	if !durationRegex.MatchString(req.TimeSpent) {
+		ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("invalid time format, use Xh or X.Yh")))
+		return
+	}
+
+	value := strings.TrimSuffix(req.TimeSpent, "h")
+	hours, _ := strconv.ParseFloat(value, 64)
+	minutes := int32(hours * 60)
+
 	arg := db.CreateHabitParams{
-		ID:        uuid.New(),
-		ColumnID:  req.ColumnID,
-		Name:      req.Name,
-		Status:    req.Status,
-		Frequency: req.Frequency,
-		TimeSpent: req.TimeSpent,
+		ID:               uuid.New(),
+		ColumnID:         req.ColumnID,
+		Name:             req.Name,
+		Status:           req.Status,
+		Frequency:        req.Frequency,
+		TimeSpentMinutes: minutes,
 	}
 
 	habit, err := server.store.CreateHabit(ctx, arg)
@@ -41,7 +67,18 @@ func (server *Server) createHabit(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, habit)
+	response := habitResponse{
+		ID:         habit.ID,
+		ColumnID:   habit.ColumnID,
+		Name:       habit.Name,
+		Status:     habit.Status,
+		Frequency:  habit.Frequency,
+		TimeSpent:  formatMinutesToHours(habit.TimeSpentMinutes),
+		CreatedAt:  habit.CreatedAt,
+		ModifiedAt: habit.ModifiedAt,
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (server *Server) listHabits(ctx *gin.Context) {
@@ -51,7 +88,22 @@ func (server *Server) listHabits(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, habits)
+	var response []habitResponse
+
+	for _, h := range habits {
+		response = append(response, habitResponse{
+			ID:         h.ID,
+			ColumnID:   h.ColumnID,
+			Name:       h.Name,
+			Status:     h.Status,
+			Frequency:  h.Frequency,
+			TimeSpent:  formatMinutesToHours(h.TimeSpentMinutes),
+			CreatedAt:  h.CreatedAt,
+			ModifiedAt: h.ModifiedAt,
+		})
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 type listHabitsByTrackerRequest struct {
@@ -71,7 +123,7 @@ func (server *Server) listHabitsByTracker(ctx *gin.Context) {
 		return
 	}
 
-	column, err := server.store.ListHabitsByTracker(ctx, id)
+	habits, err := server.store.ListHabitsByTracker(ctx, id)
 	if err != nil {
 		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(errors.New("tracker not found")))
@@ -81,7 +133,22 @@ func (server *Server) listHabitsByTracker(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, column)
+	var response []habitResponse
+
+	for _, h := range habits {
+		response = append(response, habitResponse{
+			ID:         h.ID,
+			ColumnID:   h.ColumnID,
+			Name:       h.Name,
+			Status:     h.Status,
+			Frequency:  h.Frequency,
+			TimeSpent:  formatMinutesToHours(h.TimeSpentMinutes),
+			CreatedAt:  h.CreatedAt,
+			ModifiedAt: h.ModifiedAt,
+		})
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 type listHabitsByColumnRequest struct {
@@ -101,7 +168,7 @@ func (server *Server) listHabitsByColumn(ctx *gin.Context) {
 		return
 	}
 
-	column, err := server.store.ListHabitsByColumn(ctx, id)
+	habits, err := server.store.ListHabitsByColumn(ctx, id)
 	if err != nil {
 		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(errors.New("column not found")))
@@ -111,7 +178,22 @@ func (server *Server) listHabitsByColumn(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, column)
+	var response []habitResponse
+
+	for _, h := range habits {
+		response = append(response, habitResponse{
+			ID:         h.ID,
+			ColumnID:   h.ColumnID,
+			Name:       h.Name,
+			Status:     h.Status,
+			Frequency:  h.Frequency,
+			TimeSpent:  formatMinutesToHours(h.TimeSpentMinutes),
+			CreatedAt:  h.CreatedAt,
+			ModifiedAt: h.ModifiedAt,
+		})
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 type getHabitRequest struct {
@@ -131,7 +213,7 @@ func (server *Server) getHabit(ctx *gin.Context) {
 		return
 	}
 
-	column, err := server.store.GetHabit(ctx, id)
+	habit, err := server.store.GetHabit(ctx, id)
 	if err != nil {
 		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(errors.New("habit not found")))
@@ -141,14 +223,25 @@ func (server *Server) getHabit(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, column)
+	response := habitResponse{
+		ID:         habit.ID,
+		ColumnID:   habit.ColumnID,
+		Name:       habit.Name,
+		Status:     habit.Status,
+		Frequency:  habit.Frequency,
+		TimeSpent:  formatMinutesToHours(habit.TimeSpentMinutes),
+		CreatedAt:  habit.CreatedAt,
+		ModifiedAt: habit.ModifiedAt,
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 type updateHabitRequest struct {
 	ID        uuid.UUID `json:"id" binding:"required"`
 	ColumnID  uuid.UUID `json:"column_id"`
 	Name      string    `json:"name"`
-	Status    string    `json:"status"`
+	Status    *bool     `json:"status"`
 	Frequency *[]int32  `json:"frequency"`
 	TimeSpent string    `json:"time_spent"`
 }
@@ -170,13 +263,9 @@ func (server *Server) updateHabit(ctx *gin.Context) {
 			String: req.Name,
 			Valid:  req.Name != "",
 		},
-		Status: pgtype.Text{
-			String: req.Status,
-			Valid:  req.Status != "",
-		},
-		TimeSpent: pgtype.Text{
-			String: req.TimeSpent,
-			Valid:  req.TimeSpent != "",
+		Status: pgtype.Bool{
+			Bool:  *req.Status,
+			Valid: req.Status != nil,
 		},
 		ModifiedAt: pgtype.Timestamptz{
 			Time:  time.Now(),
@@ -186,6 +275,24 @@ func (server *Server) updateHabit(ctx *gin.Context) {
 
 	if req.Frequency != nil {
 		arg.Frequency = *req.Frequency
+	}
+
+	if req.TimeSpent != "" {
+		durationRegex := regexp.MustCompile(`^\d+(\.\d+)?h$`)
+
+		if !durationRegex.MatchString(req.TimeSpent) {
+			ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("invalid time format, use Xh or X.Yh")))
+			return
+		}
+
+		value := strings.TrimSuffix(req.TimeSpent, "h")
+		hours, _ := strconv.ParseFloat(value, 64)
+		minutes := int32(hours * 60)
+
+		arg.TimeSpentMinutes = pgtype.Int4{
+			Int32: minutes,
+			Valid: true,
+		}
 	}
 
 	habit, err := server.store.UpdateHabit(ctx, arg)
@@ -203,5 +310,26 @@ func (server *Server) updateHabit(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, habit)
+	response := habitResponse{
+		ID:         habit.ID,
+		ColumnID:   habit.ColumnID,
+		Name:       habit.Name,
+		Status:     habit.Status,
+		Frequency:  habit.Frequency,
+		TimeSpent:  formatMinutesToHours(habit.TimeSpentMinutes),
+		CreatedAt:  habit.CreatedAt,
+		ModifiedAt: habit.ModifiedAt,
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func formatMinutesToHours(minutes int32) string {
+	hours := float32(minutes) / 60.0
+
+	if hours == float32(int32(hours)) {
+		return fmt.Sprintf("%.0fh", hours)
+	}
+
+	return fmt.Sprintf("%.1fh", hours)
 }

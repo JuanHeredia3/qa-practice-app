@@ -14,20 +14,20 @@ import (
 
 const createHabit = `-- name: CreateHabit :one
 INSERT INTO habits (
-  id, column_id, name, status, frequency, time_spent
+  id, column_id, name, status, frequency, time_spent_minutes
 ) VALUES (
   $1, $2, $3, $4, $5, $6
 )
-RETURNING id, column_id, name, status, time_spent, created_at, modified_at, frequency
+RETURNING id, column_id, name, created_at, modified_at, frequency, status, time_spent_minutes
 `
 
 type CreateHabitParams struct {
-	ID        uuid.UUID   `json:"id"`
-	ColumnID  uuid.UUID   `json:"column_id"`
-	Name      string      `json:"name"`
-	Status    string      `json:"status"`
-	Frequency []int32     `json:"frequency"`
-	TimeSpent pgtype.Text `json:"time_spent"`
+	ID               uuid.UUID `json:"id"`
+	ColumnID         uuid.UUID `json:"column_id"`
+	Name             string    `json:"name"`
+	Status           bool      `json:"status"`
+	Frequency        []int32   `json:"frequency"`
+	TimeSpentMinutes int32     `json:"time_spent_minutes"`
 }
 
 func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (Habit, error) {
@@ -37,24 +37,24 @@ func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (Habit
 		arg.Name,
 		arg.Status,
 		arg.Frequency,
-		arg.TimeSpent,
+		arg.TimeSpentMinutes,
 	)
 	var i Habit
 	err := row.Scan(
 		&i.ID,
 		&i.ColumnID,
 		&i.Name,
-		&i.Status,
-		&i.TimeSpent,
 		&i.CreatedAt,
 		&i.ModifiedAt,
 		&i.Frequency,
+		&i.Status,
+		&i.TimeSpentMinutes,
 	)
 	return i, err
 }
 
 const getHabit = `-- name: GetHabit :one
-SELECT id, column_id, name, status, time_spent, created_at, modified_at, frequency FROM habits
+SELECT id, column_id, name, created_at, modified_at, frequency, status, time_spent_minutes FROM habits
 WHERE id = $1 LIMIT 1
 `
 
@@ -65,17 +65,17 @@ func (q *Queries) GetHabit(ctx context.Context, id uuid.UUID) (Habit, error) {
 		&i.ID,
 		&i.ColumnID,
 		&i.Name,
-		&i.Status,
-		&i.TimeSpent,
 		&i.CreatedAt,
 		&i.ModifiedAt,
 		&i.Frequency,
+		&i.Status,
+		&i.TimeSpentMinutes,
 	)
 	return i, err
 }
 
 const listHabits = `-- name: ListHabits :many
-SELECT id, column_id, name, status, time_spent, created_at, modified_at, frequency FROM habits
+SELECT id, column_id, name, created_at, modified_at, frequency, status, time_spent_minutes FROM habits
 `
 
 func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
@@ -91,11 +91,11 @@ func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
 			&i.ID,
 			&i.ColumnID,
 			&i.Name,
-			&i.Status,
-			&i.TimeSpent,
 			&i.CreatedAt,
 			&i.ModifiedAt,
 			&i.Frequency,
+			&i.Status,
+			&i.TimeSpentMinutes,
 		); err != nil {
 			return nil, err
 		}
@@ -108,7 +108,7 @@ func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
 }
 
 const listHabitsByColumn = `-- name: ListHabitsByColumn :many
-SELECT id, column_id, name, status, time_spent, created_at, modified_at, frequency FROM habits
+SELECT id, column_id, name, created_at, modified_at, frequency, status, time_spent_minutes FROM habits
 WHERE column_id = $1
 `
 
@@ -125,11 +125,11 @@ func (q *Queries) ListHabitsByColumn(ctx context.Context, columnID uuid.UUID) ([
 			&i.ID,
 			&i.ColumnID,
 			&i.Name,
-			&i.Status,
-			&i.TimeSpent,
 			&i.CreatedAt,
 			&i.ModifiedAt,
 			&i.Frequency,
+			&i.Status,
+			&i.TimeSpentMinutes,
 		); err != nil {
 			return nil, err
 		}
@@ -142,7 +142,7 @@ func (q *Queries) ListHabitsByColumn(ctx context.Context, columnID uuid.UUID) ([
 }
 
 const listHabitsByTracker = `-- name: ListHabitsByTracker :many
-SELECT h.id, h.column_id, h.name, h.status, h.time_spent, h.created_at, h.modified_at, h.frequency
+SELECT h.id, h.column_id, h.name, h.created_at, h.modified_at, h.frequency, h.status, h.time_spent_minutes
 FROM habits h
 JOIN columns c ON c.id = h.column_id
 JOIN boards b ON b.id = c.board_id
@@ -163,11 +163,11 @@ func (q *Queries) ListHabitsByTracker(ctx context.Context, trackerID uuid.UUID) 
 			&i.ID,
 			&i.ColumnID,
 			&i.Name,
-			&i.Status,
-			&i.TimeSpent,
 			&i.CreatedAt,
 			&i.ModifiedAt,
 			&i.Frequency,
+			&i.Status,
+			&i.TimeSpentMinutes,
 		); err != nil {
 			return nil, err
 		}
@@ -186,21 +186,21 @@ SET
   name = COALESCE($2, name),
   status = COALESCE($3, status),
   frequency = COALESCE($4, frequency),
-  time_spent = COALESCE($5, time_spent),
+  time_spent_minutes = COALESCE($5, time_spent_minutes),
   modified_at = COALESCE($6, modified_at)
 WHERE
   id = $7
-RETURNING id, column_id, name, status, time_spent, created_at, modified_at, frequency
+RETURNING id, column_id, name, created_at, modified_at, frequency, status, time_spent_minutes
 `
 
 type UpdateHabitParams struct {
-	ColumnID   pgtype.UUID        `json:"column_id"`
-	Name       pgtype.Text        `json:"name"`
-	Status     pgtype.Text        `json:"status"`
-	Frequency  []int32            `json:"frequency"`
-	TimeSpent  pgtype.Text        `json:"time_spent"`
-	ModifiedAt pgtype.Timestamptz `json:"modified_at"`
-	ID         uuid.UUID          `json:"id"`
+	ColumnID         pgtype.UUID        `json:"column_id"`
+	Name             pgtype.Text        `json:"name"`
+	Status           pgtype.Bool        `json:"status"`
+	Frequency        []int32            `json:"frequency"`
+	TimeSpentMinutes pgtype.Int4        `json:"time_spent_minutes"`
+	ModifiedAt       pgtype.Timestamptz `json:"modified_at"`
+	ID               uuid.UUID          `json:"id"`
 }
 
 func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) (Habit, error) {
@@ -209,7 +209,7 @@ func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) (Habit
 		arg.Name,
 		arg.Status,
 		arg.Frequency,
-		arg.TimeSpent,
+		arg.TimeSpentMinutes,
 		arg.ModifiedAt,
 		arg.ID,
 	)
@@ -218,11 +218,11 @@ func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) (Habit
 		&i.ID,
 		&i.ColumnID,
 		&i.Name,
-		&i.Status,
-		&i.TimeSpent,
 		&i.CreatedAt,
 		&i.ModifiedAt,
 		&i.Frequency,
+		&i.Status,
+		&i.TimeSpentMinutes,
 	)
 	return i, err
 }

@@ -60,9 +60,9 @@ Table habits {
   id uuid [pk]
   column_id uuid [ref: > columns.id, not null]
   name varchar [not null]
-  status varchar [not null]
+  status boolean [not null]
   frequency int[] [not null]
-  time_spent varchar
+  time_spent_minutes int [not null]
   created_at timestamptz [not null, default: `now()`]
   modified_at timestamptz [not null, default: `now()`]
 
