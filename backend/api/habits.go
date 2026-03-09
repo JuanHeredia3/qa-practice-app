@@ -29,7 +29,6 @@ type habitResponse struct {
 type createHabitRequest struct {
 	ColumnID  uuid.UUID `json:"column_id" binding:"required"`
 	Name      string    `json:"name" binding:"required"`
-	Status    bool      `json:"status" binding:"required"`
 	Frequency []int32   `json:"frequency" binding:"required"`
 	TimeSpent string    `json:"time_spent" binding:"required"`
 }
@@ -56,7 +55,7 @@ func (server *Server) createHabit(ctx *gin.Context) {
 		ID:               uuid.New(),
 		ColumnID:         req.ColumnID,
 		Name:             req.Name,
-		Status:           req.Status,
+		Status:           true,
 		Frequency:        req.Frequency,
 		TimeSpentMinutes: minutes,
 	}
