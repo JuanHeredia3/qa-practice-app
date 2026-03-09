@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"time"
 
@@ -109,9 +108,6 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
-
-	log.Println("before calling CreateToken method:", server.config.DBSource)
-	log.Println("before calling CreateToken method:", server.config.AccessTokenDuration)
 
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		user.Username,
