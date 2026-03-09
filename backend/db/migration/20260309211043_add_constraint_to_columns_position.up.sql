@@ -1,0 +1,1 @@
+ALTER TABLE "columns" ADD CONSTRAINT column_position_key UNIQUE (position);

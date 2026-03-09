@@ -33,6 +33,11 @@ func (server *Server) createColumn(ctx *gin.Context) {
 
 	column, err := server.store.CreateColumn(ctx, arg)
 	if err != nil {
+		if db.ErrorCode(err) == db.UniqueViolation {
+			ctx.JSON(http.StatusBadRequest, errorResponse(errors.New(`a column already exists at sent position`)))
+			return
+		}
+
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
@@ -127,6 +132,11 @@ func (server *Server) updateColumn(ctx *gin.Context) {
 
 	column, err := server.store.UpdateColumn(ctx, arg)
 	if err != nil {
+		if db.ErrorCode(err) == db.UniqueViolation {
+			ctx.JSON(http.StatusBadRequest, errorResponse(errors.New(`a column already exists at sent position`)))
+			return
+		}
+
 		if errors.Is(err, db.ErrRecordNotFound) {
 			ctx.JSON(http.StatusNotFound, errorResponse(errors.New("column not found")))
 			return

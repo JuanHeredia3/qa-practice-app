@@ -1,0 +1,1 @@
+ALTER TABLE "columns" DROP CONSTRAINT column_position_key;
