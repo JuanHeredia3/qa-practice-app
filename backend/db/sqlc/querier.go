@@ -31,7 +31,7 @@ type Querier interface {
 	ListHabits(ctx context.Context) ([]Habit, error)
 	ListHabitsByColumn(ctx context.Context, columnID uuid.UUID) ([]Habit, error)
 	ListHabitsByTracker(ctx context.Context, trackerID uuid.UUID) ([]Habit, error)
-	ListTrackers(ctx context.Context) ([]Tracker, error)
+	ListTrackersByUsername(ctx context.Context, username string) ([]Tracker, error)
 	UpdateColumn(ctx context.Context, arg UpdateColumnParams) (Column, error)
 	UpdateHabit(ctx context.Context, arg UpdateHabitParams) (Habit, error)
 	UpdateHabitEntry(ctx context.Context, arg UpdateHabitEntryParams) (HabitEntry, error)

@@ -43,7 +43,9 @@ func (server *Server) createTracker(ctx *gin.Context) {
 }
 
 func (server *Server) listTrackers(ctx *gin.Context) {
-	tracker, err := server.store.ListTrackers(ctx)
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
+	tracker, err := server.store.ListTrackersByUsername(ctx, authPayload.Username)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return

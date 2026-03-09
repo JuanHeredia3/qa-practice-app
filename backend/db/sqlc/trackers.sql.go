@@ -66,12 +66,14 @@ func (q *Queries) GetTracker(ctx context.Context, id uuid.UUID) (Tracker, error)
 	return i, err
 }
 
-const listTrackers = `-- name: ListTrackers :many
+const listTrackersByUsername = `-- name: ListTrackersByUsername :many
 SELECT id, username, name, modified_at, created_at, description FROM trackers
+WHERE username = $1
+ORDER BY created_at ASC
 `
 
-func (q *Queries) ListTrackers(ctx context.Context) ([]Tracker, error) {
-	rows, err := q.db.Query(ctx, listTrackers)
+func (q *Queries) ListTrackersByUsername(ctx context.Context, username string) ([]Tracker, error) {
+	rows, err := q.db.Query(ctx, listTrackersByUsername, username)
 	if err != nil {
 		return nil, err
 	}

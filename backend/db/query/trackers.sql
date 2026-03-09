@@ -6,8 +6,10 @@ INSERT INTO trackers (
 )
 RETURNING *;
 
--- name: ListTrackers :many
-SELECT * FROM trackers;
+-- name: ListTrackersByUsername :many
+SELECT * FROM trackers
+WHERE username = $1
+ORDER BY created_at ASC;
 
 -- name: GetTracker :one
 SELECT * FROM trackers
