@@ -40,6 +40,11 @@ func (server *Server) createHabit(ctx *gin.Context) {
 		return
 	}
 
+	if !isValidFrecuency(req.Frequency) {
+		ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("frecuency should contain unique values, > 0 and < 7")))
+		return
+	}
+
 	durationRegex := regexp.MustCompile(`^\d+(\.\d+)?h$`)
 
 	if !durationRegex.MatchString(req.TimeSpent) {
@@ -331,4 +336,22 @@ func formatMinutesToHours(minutes int32) string {
 	}
 
 	return fmt.Sprintf("%.1fh", hours)
+}
+
+func isValidFrecuency(values []int32) bool {
+	seen := make(map[int32]struct{})
+
+	for _, v := range values {
+		if _, exists := seen[v]; exists {
+			return false
+		}
+
+		if v < 1 || v > 7 {
+			return false
+		}
+
+		seen[v] = struct{}{}
+	}
+
+	return true
 }
