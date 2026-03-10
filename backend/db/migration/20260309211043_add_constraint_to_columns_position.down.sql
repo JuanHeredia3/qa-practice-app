@@ -1,1 +1,1 @@
-ALTER TABLE "columns" DROP CONSTRAINT column_position_key;
+ALTER TABLE "columns" DROP CONSTRAINT id_board_position_key;

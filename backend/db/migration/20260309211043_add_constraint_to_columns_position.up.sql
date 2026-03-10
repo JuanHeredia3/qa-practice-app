@@ -1,1 +1,1 @@
-ALTER TABLE "columns" ADD CONSTRAINT column_position_key UNIQUE (position);
+ALTER TABLE "columns" ADD CONSTRAINT id_board_position_key UNIQUE (board_id, position);
