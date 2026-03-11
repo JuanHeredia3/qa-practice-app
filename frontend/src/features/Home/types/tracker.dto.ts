@@ -6,3 +6,8 @@ export interface Tracker {
   created_at:  Date;
   description: string;
 }
+
+export interface CreateTracker {
+  name:        string;
+  description: string;
+}
