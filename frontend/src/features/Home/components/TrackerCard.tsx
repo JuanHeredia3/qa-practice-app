@@ -30,7 +30,7 @@ export const TrackerCard: FC<Props> = ({ id, title, description }) => {
         <Button 
           className="bg-indigo-500 hover:bg-indigo-400 text-slate-100 w-full"
           onClick={() => navigate(`tracker/${id}`)}
-        >View Tracker</Button>
+        >Ver Tracker</Button>
       </CardFooter>
     </Card>
   )
