@@ -1,5 +1,7 @@
 import type { AxiosInstance } from "axios";
 import type { Tracker } from "../types/tracker.dto";
+import type { Habit } from "@/features/Habits/types/habit.dto";
+import type { Board } from "@/features/Tracker/types/board.dto";
 
 export class TrackerService {
   private api: AxiosInstance;
@@ -15,6 +17,16 @@ export class TrackerService {
 
   async getTrackerById(id: string) {
     const response = await this.api.get<Tracker>(`/trackers/${id}`);
+    return response;
+  }
+
+  async getHabitsByTrackerId(id: string) {
+    const response = await this.api.get<Habit[]>(`/trackers/habits/${id}`);
+    return response;
+  }
+
+  async getBoardByTrackerId(id: string) {
+    const response = await this.api.get<Board>(`/trackers/board/${id}`);
     return response;
   }
 }

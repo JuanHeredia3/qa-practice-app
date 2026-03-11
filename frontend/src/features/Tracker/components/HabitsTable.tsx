@@ -8,35 +8,51 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import type { Habit } from "@/features/Habits/types/habit.dto";
 
-const habits = [
-  { name: "INV001", status: "Activo", frecuency: "$250.00", timeSpent: "Credit Card" },
-  { name: "INV002", status: "Inactivo", frecuency: "$150.00", timeSpent: "PayPal" },
-  { name: "INV003", status: "Activo", frecuency: "$350.00", timeSpent: "Bank Transfer" },
-  { name: "INV004", status: "Activo", frecuency: "$450.00", timeSpent: "Credit Card" },
-  { name: "INV005", status: "Activo", frecuency: "$550.00", timeSpent: "PayPal" },
-  { name: "INV006", status: "Inactivo", frecuency: "$200.00", timeSpent: "Bank Transfer" },
-  { name: "INV007", status: "Activo", frecuency: "$300.00", timeSpent: "Credit Card" },
-]
-
-function getStatusStyles(status: string) {
-  switch (status) {
-    case "Activo":
-      return "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-    case "Inactivo":
-      return "bg-red-500/10 text-red-400 border border-red-500/20"
-    default:
-      return "bg-red-500/10 text-red-400 border border-red-500/20"
-  }
+function getStatusStyles(status: boolean) {
+  return status ?
+    "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20";
 }
 
-// interface Props {
-//   habits: { id: string, title: string, column: string }[]
-// }
+function mapFrecuencyToDays(frequency: number[]) {
+  const frequencyDays = frequency.map((dayNumber) => {
+    switch (dayNumber) {
+      case 1:
+        return "Lunes"
+      case 2:
+        return "Martes"
+      case 3:
+        return "Miércoles"
+      case 4:
+        return "Jueves"
+      case 5:
+        return "Viernes"
+      case 6:
+        return "Sábado"
+      case 7:
+        return "Domingo"
+    }
+  });
 
-export function HabitsTable() {
+  return frequencyDays.join(", ");
+}
+
+interface Props {
+  habits: Habit[]
+}
+
+export function HabitsTable({ habits }: Props) {
+  if (habits.length === 0) return <h3 className="text-lg text-slate-200 font-thin italic">Acá aparecerá el <b>listado de hábitos</b> de este tracker</h3>
+
   return (
     <div className="rounded-2xl border border-slate-700 bg-slate-900/70 backdrop-blur-sm shadow-lg p-4">
+      <div className="mb-5">
+        <h2 className="text-lg text-slate-200">
+          Listado de Hábitos
+        </h2>
+      </div>
+
       <Table>
         <TableCaption className="text-slate-400">
           Listado de hábitos que contiene el tracker
@@ -46,15 +62,15 @@ export function HabitsTable() {
           <TableRow className="border-b border-slate-700">
             <TableHead className="text-slate-300">Hábito</TableHead>
             <TableHead className="text-slate-300">Estado</TableHead>
-            <TableHead className="text-slate-300">Frecuencia</TableHead>
-            <TableHead className="text-right text-slate-300">Tiempo dedicado</TableHead>
+            <TableHead className="text-slate-300">Tiempo dedicado</TableHead>
+            <TableHead className="text-right text-slate-300">Frecuencia</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {habits.map((invoice) => (
             <TableRow
-              key={invoice.name}
+              key={invoice.id}
               className="border-b border-slate-800 hover:bg-slate-800/40 transition-colors"
             >
               <TableCell className="font-medium text-slate-100">
@@ -67,16 +83,16 @@ export function HabitsTable() {
                     invoice.status
                   )}`}
                 >
-                  {invoice.status}
+                  {invoice.status ? "Activo" : "Inactivo"}
                 </span>
               </TableCell>
 
               <TableCell className="text-slate-300">
-                {invoice.timeSpent}
+                {invoice.time_spent}
               </TableCell>
 
               <TableCell className="text-right text-slate-200 font-semibold">
-                {invoice.frecuency}
+                {mapFrecuencyToDays(invoice.frequency)}
               </TableCell>
             </TableRow>
           ))}

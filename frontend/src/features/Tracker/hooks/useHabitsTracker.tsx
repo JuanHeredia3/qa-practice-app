@@ -2,7 +2,7 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { useState } from "react";
 
 export const useHabitsTracker = (habitslist: { id: string, title: string, column: string }[]) => {
-  const [habits, setHabits] = useState(habitslist);
+  const [filteredHabits, setFilteredHabits] = useState(habitslist);
   const [date, setDate] = useState<string>(new Date().toLocaleDateString("es-AR", {
     day: "2-digit",
     month: "long",
@@ -22,7 +22,7 @@ export const useHabitsTracker = (habitslist: { id: string, title: string, column
     const { active, over } = event
     if (!over) return
 
-    const newHabits = habits.map((task) => {
+    const newHabits = filteredHabits.map((task) => {
       if (task.id === active.id) {
         if (task.column === over.id) return task
 
@@ -34,11 +34,11 @@ export const useHabitsTracker = (habitslist: { id: string, title: string, column
       }
     });
 
-    setHabits(newHabits);
+    setFilteredHabits(newHabits);
   }
 
   return {
-    habits,
+    filteredHabits,
     date,
     buttonDisable,
 
